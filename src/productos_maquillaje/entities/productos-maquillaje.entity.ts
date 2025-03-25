@@ -19,8 +19,14 @@ export class ProductoMaquillaje {
   @Column()
   warehouse_location: string;
 
-  @Column('int')
-  durability_score: number;
+  @Column('int', { default: 0 })
+durability_score: number;
+
+  @Column('int', { default: 0 })
+  safety_score: number;
+
+  @Column('int', { default: 0 })
+  magical_score: number;
 
   @OneToMany(() => ProductTest, (test) => test.product)
   productTests: ProductTest[];

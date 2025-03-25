@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class UsuariosService {
@@ -31,11 +32,16 @@ async findAll() {
     return await this.usuarioRepo.find();
   }
 
-async findOne(id: string) {
-    const usuario= await this.usuarioRepo.findOne({ where: { id } });
-    if (!usuario){
-      throw new NotFoundException(`El usuario con ID ${id} no fue encontrado`)
+  async findOne(id: string) {
+    const usuario = await this.usuarioRepo.findOne({
+      where: { id },
+      relations: ['productTests'], // 👈 esto es esencial
+    });
+  
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
     }
+  
     return usuario;
   }
 
@@ -49,14 +55,25 @@ async findOne(id: string) {
   }
 
   async remove(id: string) {
-    const usuario = await this.findOne(id);
+    const usuario = await this.usuarioRepo.findOne({
+      where: { id },
+      relations: ['productTests'], // 💥 esto es CLAVE
+    });
   
     if (!usuario) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException(`Usuario con id ${id} no existe`);
+    }
+  
+    if (usuario.rol === 'TESTER' && usuario.productTests.length > 0) {
+      throw new BadRequestException(
+        'Este tester no puede ser eliminado porque ha participado en pruebas.',
+      );
     }
   
     return this.usuarioRepo.remove(usuario);
   }
+  
+
 
   findByTesterType(type: 'NORMAL' | 'DWARF' | 'SPECIAL') {
     return this.usuarioRepo.find({

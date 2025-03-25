@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ProductTest } from '../../product-tests/entities/product-test.entity';
 import { OneToMany } from 'typeorm';
+import { Order } from 'src/order-and-transactions/entities/order-and-transactions.entity';
+
 
 @Entity('usuarios')
 export class Usuario {
@@ -36,5 +38,8 @@ export class Usuario {
   tester_type: 'NORMAL' | 'DWARF' | 'SPECIAL';
 
   @OneToMany(() => ProductTest, (test) => test.tester)
-  productTests: ProductTest[];
+productTests: ProductTest[];
+
+@OneToMany(() => Order, (order) => order.client)
+orders: Order[];
 }

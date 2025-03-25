@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductosMaquillajeService } from './productos-maquillaje.service';
 import { CreateProductoMaquillajeDto } from './dto/create-productos-maquillaje.dto';
 import { UpdateProductoMaquillajeDto } from './dto/update-productos-maquillaje.dto';
+import { UpdateProductoRankingDto } from './dto/update-producto-ranking.dto'; // 👈 importa tu nuevo DTO
+
 
 @Controller('productos-maquillaje')
 export class ProductosMaquillajeController {
@@ -31,4 +33,28 @@ export class ProductosMaquillajeController {
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
+
+  @Patch(':id/ranking')
+  updateRanking(
+    @Param('id') id: string,
+    @Body() dto: UpdateProductoRankingDto,
+  ) {
+    return this.service.updateRanking(id, dto);
+  }
+
+  @Get('ranking/durability')
+findMostDurable() {
+  return this.service.findMostDurable();
+}
+  
+@Get('ranking/safety')
+findMostSafe() {
+  return this.service.findMostSafe();
+}
+
+@Get('ranking/magical')
+findMostMagical() {
+  return this.service.findMostMagical();
+}
+
 }

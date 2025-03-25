@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ProductoMaquillaje } from './entities/productos-maquillaje.entity';
 import { CreateProductoMaquillajeDto } from './dto/create-productos-maquillaje.dto';
 import { UpdateProductoMaquillajeDto } from './dto/update-productos-maquillaje.dto';
+import { UpdateProductoRankingDto } from './dto/update-producto-ranking.dto'; // 👈 importante
 
 @Injectable()
 export class ProductosMaquillajeService {
@@ -42,4 +43,36 @@ export class ProductosMaquillajeService {
     const producto = await this.findOne(id);
     return this.productosRepo.remove(producto);
   }
+
+  // 👇 NUEVO: actualizar puntuaciones
+  async updateRanking(id: string, dto: UpdateProductoRankingDto) {
+    const producto = await this.productosRepo.findOne({ where: { id } });
+
+    if (!producto) {
+      throw new NotFoundException(`Producto con id ${id} no existe`);
+    }
+
+    await this.productosRepo.update(id, dto);
+
+    return this.productosRepo.findOne({ where: { id } });
+  }
+
+  async findMostDurable() {
+    return this.productosRepo.find({
+      order: { durability_score: 'DESC' },
+    });
+  }
+
+  async findMostSafe() {
+    return this.productosRepo.find({
+      order: { safety_score: 'DESC' },
+    });
+  }
+  
+  async findMostMagical() {
+    return this.productosRepo.find({
+      order: { magical_score: 'DESC' },
+    });
+  }
+  
 }
