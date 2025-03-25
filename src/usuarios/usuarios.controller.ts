@@ -31,4 +31,9 @@ export class UsuariosController {
   remove(@Param('id') id: string) {
     return this.usuariosService.remove(id);
   }
+
+  @Get('testers/:type')
+findTestersByType(@Param('type') type: 'NORMAL' | 'DWARF' | 'SPECIAL') {
+  return this.usuariosService.findByTesterType(type);
+}
 }

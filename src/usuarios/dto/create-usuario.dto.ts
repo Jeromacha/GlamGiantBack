@@ -15,6 +15,12 @@ export class CreateUsuarioDto {
   @IsEnum(['ADMIN', 'CLIENT', 'EMPLOYEE', 'TESTER'])
   rol: string;
 
+  @IsOptional()
+  @IsEnum(['NORMAL', 'DWARF', 'SPECIAL'], {
+    message: 'tester_type debe ser NORMAL, DWARF o SPECIAL',
+  })
+  tester_type: 'NORMAL' | 'DWARF' | 'SPECIAL';
+  
   @IsBoolean()
   @IsOptional()
   test_subject_status?: boolean;

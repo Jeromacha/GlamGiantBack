@@ -1,4 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductTest } from '../../product-tests/entities/product-test.entity';
+import { OneToMany } from 'typeorm';
 
 @Entity('usuarios')
 export class Usuario {
@@ -25,4 +27,14 @@ export class Usuario {
 
   @Column('simple-array', { nullable: true })
   purchase_history: string[]; // Lista de órdenes (IDs)
+
+  @Column({
+    type: 'enum',
+    enum: ['NORMAL', 'DWARF', 'SPECIAL'],
+    default: 'NORMAL'
+  })
+  tester_type: 'NORMAL' | 'DWARF' | 'SPECIAL';
+
+  @OneToMany(() => ProductTest, (test) => test.tester)
+  productTests: ProductTest[];
 }

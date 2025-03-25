@@ -57,4 +57,13 @@ async findOne(id: string) {
   
     return this.usuarioRepo.remove(usuario);
   }
+
+  findByTesterType(type: 'NORMAL' | 'DWARF' | 'SPECIAL') {
+    return this.usuarioRepo.find({
+      where: {
+        rol: 'TESTER',
+        tester_type: type,
+      },
+    });
+  }
 }
