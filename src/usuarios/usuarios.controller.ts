@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { TesterType } from './enums/tester-type.enum';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -33,7 +34,8 @@ export class UsuariosController {
   }
 
   @Get('testers/:type')
-findTestersByType(@Param('type') type: 'NORMAL' | 'DWARF' | 'SPECIAL') {
-  return this.usuariosService.findByTesterType(type);
-}
+  findTestersByType(@Param('type') type: string) {
+    const castedType = type.toUpperCase() as TesterType;
+    return this.usuariosService.findByTesterType(castedType);
+  }
 }

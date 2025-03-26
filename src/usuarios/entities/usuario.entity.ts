@@ -1,8 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+} from 'typeorm';
 import { ProductTest } from '../../product-tests/entities/product-test.entity';
-import { OneToMany } from 'typeorm';
 import { OrderAndTransaction } from 'src/order-and-transactions/entities/order-and-transactions.entity';
-
+import { UserRole } from '../enums/user-role.enum';
+import { TesterType } from '../enums/tester-type.enum';
 
 @Entity('usuarios')
 export class Usuario {
@@ -18,8 +23,8 @@ export class Usuario {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: ['ADMIN', 'CLIENT', 'EMPLOYEE', 'TESTER'] })
-  rol: string;
+  @Column({ type: 'enum', enum: UserRole })
+  rol: UserRole;
 
   @Column({ default: false })
   test_subject_status: boolean;
@@ -28,18 +33,14 @@ export class Usuario {
   allergic_reactions: string;
 
   @Column('simple-array', { nullable: true })
-  purchase_history: string[]; // Lista de órdenes (IDs)
+  purchase_history: string[];
 
-  @Column({
-    type: 'enum',
-    enum: ['NORMAL', 'DWARF', 'SPECIAL'],
-    default: 'NORMAL'
-  })
-  tester_type: 'NORMAL' | 'DWARF' | 'SPECIAL';
+  @Column({ type: 'enum', enum: TesterType, default: TesterType.NORMAL })
+  tester_type: TesterType;
 
   @OneToMany(() => ProductTest, (test) => test.tester)
-productTests: ProductTest[];
+  productTests: ProductTest[];
 
-@OneToMany(() => OrderAndTransaction, (order) => order.client)
-orders: OrderAndTransaction[];
+  @OneToMany(() => OrderAndTransaction, (order) => order.client)
+  orders: OrderAndTransaction[];
 }

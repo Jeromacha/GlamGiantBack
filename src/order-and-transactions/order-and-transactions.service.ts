@@ -22,18 +22,15 @@ export class OrderAndTransactionsService {
   ) {}
 
   async create(dto: CreateOrderAndTransactionsDto): Promise<OrderAndTransaction> {
-    const { client_id, products: productIds, total_amount, payment_status } = dto;
+    const { clientId, productIds, total_amount, payment_status } = dto;
 
-    const client = await this.userRepo.findOne({ where: { id: client_id } });
-    if (!client) throw new NotFoundException(`Cliente con ID ${client_id} no encontrado`);
-    
-    const products = await this.productRepo.find({
-      where: {
-        id: In(productIds),
-      },
-    });    if (products.length !== productIds.length) {
-      throw new NotFoundException('Uno o más productos no fueron encontrados');
-    }
+    const client = await this.userRepo.findOne({ where: { id: clientId } });
+if (!client) throw new NotFoundException(`Cliente con ID ${clientId} no encontrado`);
+
+  const products = await this.productRepo.findBy({ id: In(productIds) });
+if (products.length !== productIds.length) {
+  throw new NotFoundException('Uno o más productos no fueron encontrados');
+}
     
     const newOrder = this.orderRepo.create({
       client,
@@ -64,17 +61,17 @@ export class OrderAndTransactionsService {
     const order = await this.findOne(id);
 
     // Si se desean actualizar productos o cliente, deben ser cargados
-    if (dto.client_id) {
-      const client = await this.userRepo.findOne({ where: { id: dto.client_id } });
-      if (!client) throw new NotFoundException(`Cliente con ID ${dto.client_id} no encontrado`);
+    if (dto.clientId) {
+      const client = await this.userRepo.findOne({ where: { id: dto.clientId } });
+      if (!client) throw new NotFoundException(`Cliente con ID ${dto.clientId} no encontrado`);
       order.client = client;
     }
 
-    if (dto.products && dto.products.length > 0) {
+    if (dto.productIds && dto.productIds.length > 0) {
       const products = await this.productRepo.find({
-        where: { id: In(dto.products) },
+        where: { id: In(dto.productIds) },
       });
-      if (products.length !== dto.products.length) {
+      if (products.length !== dto.productIds.length) {
         throw new NotFoundException('Uno o más productos no fueron encontrados');
       }
       order.products = products;

@@ -5,6 +5,8 @@ import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { BadRequestException } from '@nestjs/common';
+import { UserRole } from './enums/user-role.enum';
+import { TesterType } from './enums/tester-type.enum';
 
 @Injectable()
 export class UsuariosService {
@@ -75,10 +77,10 @@ async findAll() {
   
 
 
-  findByTesterType(type: 'NORMAL' | 'DWARF' | 'SPECIAL') {
+  findByTesterType(type: TesterType) {
     return this.usuarioRepo.find({
       where: {
-        rol: 'TESTER',
+        rol: UserRole.TESTER,
         tester_type: type,
       },
     });

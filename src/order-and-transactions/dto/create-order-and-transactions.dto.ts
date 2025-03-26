@@ -3,13 +3,14 @@ import { PaymentStatus } from '../entities/order-and-transactions.entity';
 
 export class CreateOrderAndTransactionsDto {
   @IsUUID()
-  client_id: string;
+  clientId: string;
 
   @IsArray()
   @IsUUID('all', { each: true })
-  products: string[]; // ← este nombre DEBE coincidir con el destructuring del body
+  productIds: string[];
 
   @IsNumber()
+  @Min(0)
   total_amount: number;
 
   @IsEnum(PaymentStatus)

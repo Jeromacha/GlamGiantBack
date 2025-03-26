@@ -1,6 +1,15 @@
-import { IsEmail, IsEnum, IsNotEmpty, MinLength } from 'class-validator';
-import { IsBoolean, IsOptional, IsString, IsArray } from 'class-validator';
-
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  MinLength,
+  IsBoolean,
+  IsOptional,
+  IsString,
+  IsArray,
+} from 'class-validator';
+import { UserRole } from '../enums/user-role.enum';
+import { TesterType } from '../enums/tester-type.enum';
 
 export class CreateUsuarioDto {
   @IsNotEmpty()
@@ -12,15 +21,17 @@ export class CreateUsuarioDto {
   @MinLength(6)
   password: string;
 
-  @IsEnum(['ADMIN', 'CLIENT', 'EMPLOYEE', 'TESTER'])
-  rol: string;
+  @IsEnum(UserRole, {
+    message: 'rol debe ser uno de los siguientes valores: ADMIN, CLIENT, EMPLOYEE, TESTER',
+  })
+  rol: UserRole;
 
   @IsOptional()
-  @IsEnum(['NORMAL', 'DWARF', 'SPECIAL'], {
+  @IsEnum(TesterType, {
     message: 'tester_type debe ser NORMAL, DWARF o SPECIAL',
   })
-  tester_type: 'NORMAL' | 'DWARF' | 'SPECIAL';
-  
+  tester_type?: TesterType;
+
   @IsBoolean()
   @IsOptional()
   test_subject_status?: boolean;
@@ -33,3 +44,4 @@ export class CreateUsuarioDto {
   @IsOptional()
   purchase_history?: string[];
 }
+
