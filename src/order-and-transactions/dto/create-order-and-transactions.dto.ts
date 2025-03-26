@@ -1,4 +1,4 @@
-import { IsUUID, IsArray, IsNumber, IsEnum } from 'class-validator';
+import { IsUUID, IsArray, IsNumber, IsEnum, Min } from 'class-validator';
 import { PaymentStatus } from '../entities/order-and-transactions.entity';
 
 export class CreateOrderAndTransactionsDto {
@@ -6,7 +6,8 @@ export class CreateOrderAndTransactionsDto {
   client_id: string;
 
   @IsArray()
-  products: string[];
+  @IsUUID('all', { each: true })
+  products: string[]; // ← este nombre DEBE coincidir con el destructuring del body
 
   @IsNumber()
   total_amount: number;

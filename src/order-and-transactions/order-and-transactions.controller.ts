@@ -11,7 +11,7 @@ import { OrderAndTransactionsService } from './order-and-transactions.service';
 import { CreateOrderAndTransactionsDto } from './dto/create-order-and-transactions.dto';
 import { UpdateOrderAndTransactionsDto } from './dto/update-order-and-transaction.dto';
 
-@Controller('orders')
+@Controller('order-and-transactions')
 export class OrderAndTransactionsController {
   constructor(
     private readonly service: OrderAndTransactionsService,
