@@ -7,6 +7,7 @@ import { Usuario } from './entities/usuario.entity';
 import { BadRequestException } from '@nestjs/common';
 import { UserRole } from './enums/user-role.enum';
 import { TesterType } from './enums/tester-type.enum';
+import * as bcrypt from 'bcrypt'; // Asegúrate de tener esto al inicio
 
 @Injectable()
 export class UsuariosService {
@@ -18,18 +19,26 @@ export class UsuariosService {
 
   //Crear usuario
 
-async create(createUsuarioDto: CreateUsuarioDto) {
-  const existingUsuario = await this.usuarioRepo.findOne({
-    where: {email: createUsuarioDto.email},
-  })
-
-  if(existingUsuario){
-    throw new ConflictException('El email ya se está usando');
+  async create(createUsuarioDto: CreateUsuarioDto) {
+    const existingUsuario = await this.usuarioRepo.findOne({
+      where: { email: createUsuarioDto.email },
+    });
+  
+    if (existingUsuario) {
+      throw new ConflictException('El email ya se está usando');
+    }
+  
+    // 👇 Aquí está la diferencia: hashear la contraseña
+    const hashedPassword = await bcrypt.hash(createUsuarioDto.password, 10);
+  
+    const nuevoUsuario = this.usuarioRepo.create({
+      ...createUsuarioDto,
+      password: hashedPassword,
+    });
+  
+    return this.usuarioRepo.save(nuevoUsuario);
   }
-    const Nuevousuario = this.usuarioRepo.create(createUsuarioDto);
-    return this.usuarioRepo.save(Nuevousuario);
-  }
-
+  
 async findAll() {
     return await this.usuarioRepo.find();
   }
