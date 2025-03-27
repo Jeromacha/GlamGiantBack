@@ -6,10 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { OrderAndTransactionsService } from './order-and-transactions.service';
 import { CreateOrderAndTransactionsDto } from './dto/create-order-and-transactions.dto';
 import { UpdateOrderAndTransactionsDto } from './dto/update-order-and-transaction.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from 'src/usuarios/enums/user-role.enum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('order-and-transactions')
 export class OrderAndTransactionsController {
@@ -17,6 +22,8 @@ export class OrderAndTransactionsController {
     private readonly service: OrderAndTransactionsService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.CLIENT)
   @Post()
   create(@Body() dto: CreateOrderAndTransactionsDto) {
     return this.service.create(dto);

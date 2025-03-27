@@ -26,8 +26,8 @@ export class OrderAndTransaction {
   id: string;
 
   @ManyToOne(() => Usuario, (user) => user.orders, { eager: true })
-@JoinColumn({ name: 'client_id' })
-client: Usuario;
+  @JoinColumn({ name: 'client_id' })
+  client: Usuario;
 
   @ManyToMany(() => ProductoMaquillaje)
   @JoinTable()
