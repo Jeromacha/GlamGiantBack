@@ -12,12 +12,14 @@ import { UserRole } from '../enums/user-role.enum';
 import { TesterType } from '../enums/tester-type.enum';
 
 export class CreateUsuarioDto {
+  @IsString()
   @IsNotEmpty()
   nombre: string;
 
   @IsEmail()
   email: string;
 
+  @IsString()
   @MinLength(6)
   password: string;
 
@@ -44,4 +46,3 @@ export class CreateUsuarioDto {
   @IsOptional()
   purchase_history?: string[];
 }
-
