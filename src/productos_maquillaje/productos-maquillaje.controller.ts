@@ -9,7 +9,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { UserRole } from 'src/usuarios/enums/user-role.enum';
 
-@Controller('productos-maquillaje')
+@Controller('productos')
 export class ProductosMaquillajeController {
   constructor(private readonly service: ProductosMaquillajeService) {}
 

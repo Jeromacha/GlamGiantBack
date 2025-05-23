@@ -11,16 +11,23 @@ import { ValidationPipe } from '@nestjs/common'; // 👈 Importa esto
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 👇 Agrega esto para mostrar errores detallados del DTO
+  // ✅ Habilitar CORS para el frontend (ajusta la URL si es necesario)
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
+
+  // 👇 Validación global de DTOs
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,               // Elimina propiedades que no están en el DTO
-      forbidNonWhitelisted: true,   // Lanza error si hay propiedades extra
-      transform: true,              // Convierte tipos automáticamente
-      disableErrorMessages: false,  // 👈 Muestra mensajes de error completos
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      disableErrorMessages: false,
     }),
   );
 
-  await app.listen(3000);
+  await app.listen(3001);
+  console.log('🚀 Backend de GlamGiant corriendo en http://localhost:3001');
 }
 bootstrap();
