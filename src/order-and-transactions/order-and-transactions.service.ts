@@ -1,12 +1,12 @@
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { OrderAndTransaction } from './entities/order-and-transactions.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import { ProductoMaquillaje } from 'src/productos_maquillaje/entities/productos-maquillaje.entity';
 import { CreateOrderAndTransactionsDto } from './dto/create-order-and-transactions.dto';
 import { UpdateOrderAndTransactionsDto } from './dto/update-order-and-transaction.dto';
-import { In } from 'typeorm';
 
 @Injectable()
 export class OrderAndTransactionsService {
@@ -25,20 +25,35 @@ export class OrderAndTransactionsService {
     const { clientId, productIds, total_amount, payment_status } = dto;
 
     const client = await this.userRepo.findOne({ where: { id: clientId } });
-if (!client) throw new NotFoundException(`Cliente con ID ${clientId} no encontrado`);
+    if (!client) throw new NotFoundException(`Cliente con ID ${clientId} no encontrado`);
 
-  const products = await this.productRepo.findBy({ id: In(productIds) });
-if (products.length !== productIds.length) {
-  throw new NotFoundException('Uno o más productos no fueron encontrados');
-}
-    
+    const products = await this.productRepo.findBy({ id: In(productIds) });
+    if (products.length !== productIds.length) {
+      throw new NotFoundException('Uno o más productos no fueron encontrados');
+    }
+
+    // ✅ VALIDAR stock disponible
+    for (const producto of products) {
+      if (producto.stock <= 0) {
+        throw new Error(`El producto "${producto.name}" no tiene stock disponible.`);
+      }
+    }
+
+    // ✅ DESCONTAR 1 unidad de cada producto
+    for (const producto of products) {
+      producto.stock -= 1;
+    }
+
+    // ✅ GUARDAR cambios en los productos
+    await this.productRepo.save(products);
+
     const newOrder = this.orderRepo.create({
       client,
       products,
       total_amount,
       payment_status,
     });
-    
+
     return await this.orderRepo.save(newOrder);
   }
 
@@ -60,7 +75,6 @@ if (products.length !== productIds.length) {
   async update(id: string, dto: UpdateOrderAndTransactionsDto): Promise<OrderAndTransaction> {
     const order = await this.findOne(id);
 
-    // Si se desean actualizar productos o cliente, deben ser cargados
     if (dto.clientId) {
       const client = await this.userRepo.findOne({ where: { id: dto.clientId } });
       if (!client) throw new NotFoundException(`Cliente con ID ${dto.clientId} no encontrado`);
