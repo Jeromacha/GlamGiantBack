@@ -13,7 +13,7 @@ async function bootstrap() {
 
   // ✅ Habilitar CORS para el frontend (ajusta la URL si es necesario)
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: 'https://glam-giant-front.vercel.app',
     credentials: true,
   });
 
