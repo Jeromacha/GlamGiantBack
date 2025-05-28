@@ -2,26 +2,24 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import * as dns from 'dns';
-dns.setDefaultResultOrder('ipv4first'); // 👈 Forzar IPv4
+dns.setDefaultResultOrder('ipv4first');
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common'; // 👈 Importa esto
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ✅ Habilitar CORS para el frontend (ajusta la URL si es necesario)
+  // ✅ Un solo enableCors con múltiples orígenes
   app.enableCors({
-    origin: 'https://glam-giant-front.vercel.app',
-    credentials: true,
-  });
-  app.enableCors({
-    origin: 'http://localhost:3000', // 👈 Permite localhost para desarrollo
+    origin: [
+      'https://glam-giant-front.vercel.app', // producción
+      'http://localhost:3000'                 // desarrollo local
+    ],
     credentials: true,
   });
 
-  // 👇 Validación global de DTOs
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
