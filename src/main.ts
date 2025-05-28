@@ -16,6 +16,10 @@ async function bootstrap() {
     origin: 'https://glam-giant-front.vercel.app',
     credentials: true,
   });
+  app.enableCors({
+    origin: 'http://localhost:3000', // 👈 Permite localhost para desarrollo
+    credentials: true,
+  });
 
   // 👇 Validación global de DTOs
   app.useGlobalPipes(
